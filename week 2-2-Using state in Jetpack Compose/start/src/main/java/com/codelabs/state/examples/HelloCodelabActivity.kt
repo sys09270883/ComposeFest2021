@@ -41,7 +41,7 @@ import com.codelabs.state.databinding.ActivityHelloCodelabBinding
 class HelloCodelabActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHelloCodelabBinding
-    var name = ""
+    private val viewModel by viewModels<HelloViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,15 +50,19 @@ class HelloCodelabActivity : AppCompatActivity() {
 
         // doAfterTextChange is an event that modifies state
         binding.textInput.doAfterTextChanged { text ->
-            name = text.toString()
-            updateHello()
+            val name = text.toString()
+            viewModel.onNameChanged(name)
+        }
+
+        viewModel.name.observe(this) { name ->
+            binding.helloText.text = "Hello, $name"
         }
     }
 
     /**
      * This function updates the screen to show the current state of [name]
      */
-    private fun updateHello() {
+    private fun updateHello(name: String) {
         binding.helloText.text = "Hello, $name"
     }
 }
